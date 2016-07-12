@@ -70,13 +70,16 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     private var shiftButton: KeyButton!
     private var deleteButton: KeyButton!
     private var tabButton: KeyButton!
-    private var nextKeyboardButton: KeyButton!
+    private var nextKeyboardButton: UIButton!
     private var spaceButton: KeyButton!
     private var returnButton: KeyButton!
     private var currentLanguageLabel: UILabel!
     private var oopButton: KeyButton!
     private var numpadButton: KeyButton!
+    
     private var shortWordButton: KeyButton!
+    private var arrayOfShortWordButton: [KeyButton] = []
+    
     private var dotButton: KeyButton!
     private var eepButton: KeyButton!
     private var iipButton: KeyButton!
@@ -144,29 +147,151 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         }
     }
     
+    //@IBOutlet var nextKeyboardButton: UIButton!
+    //var heightConstraint: NSLayoutConstraint!
+    var nextKeyboardButtonLeftSideConstraint: NSLayoutConstraint!
+    
+    func updateConstraintForShortWorld()
+    {
+        for cons in arrayOfShortWordButton[0].constraints{
+            arrayOfShortWordButton[0].removeConstraint(cons);
+        }
+        
+        let topCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: 0.0);
+        
+        let leftCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Leading, relatedBy: .Equal, toItem: view, attribute: .Leading, multiplier: 1.0, constant: spacing );
+        
+        let heightCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: wordKeyWidth)
+        
+        arrayOfShortWordButton[0].translatesAutoresizingMaskIntoConstraints = false
+        topCons.active = true;
+        leftCons.active = true;
+        heightCons.active = true;
+        widthCons.active = true;
+        
+        for  i in 1..<arrayOfShortWordButton.count
+        {
+            let previosBtn = arrayOfShortWordButton[i-1]
+            let shortWordButtonObj = arrayOfShortWordButton[i];
+            
+            for cons in shortWordButtonObj.constraints{
+                shortWordButtonObj.removeConstraint(cons);
+            }
+            
+            let topCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: 0.0);
+            
+            let leftCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Leading, relatedBy: .Equal, toItem: previosBtn, attribute: .Trailing, multiplier: 1.0, constant: spacing );
+            
+            let heightCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+            
+            let widthCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: wordKeyWidth)
+            
+            shortWordButtonObj.translatesAutoresizingMaskIntoConstraints = false;
+            topCons.active = true;
+            leftCons.active = true;
+            heightCons.active = true;
+            widthCons.active = true;
+        }
+    }
+    
+    override func updateViewConstraints()
+    {
+        super.updateViewConstraints()
+        
+        // Add custom view sizing constraints here
+        if (view.frame.size.width == 0 || view.frame.size.height == 0) {
+           return
+        }
+        
+        updateConstraintForShortWorld();
+        
+        
+        setUpHeightConstraint()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 210.0/255, green: 213.0/255, blue: 219.0/255, alpha: 1)
-        heightConstraint = NSLayoutConstraint(item: self.view, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0.0, constant: self.keyboardHeight)
-//        view.addConstraint(heightConstraint)
+//        view.backgroundColor = UIColor(red: 210.0/255, green: 213.0/255, blue: 219.0/255, alpha: 1)
+//        heightConstraint = NSLayoutConstraint(item: self.view, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0.0, constant: self.keyboardHeight)
+////        view.addConstraint(heightConstraint)
+        
+        nextKeyboardButton = UIButton(type: .System)
+        nextKeyboardButton.setTitle(
+            NSLocalizedString("Next Keyboard", comment: "Title for 'Next Keyboard' button"),
+            forState: .Normal)
+        nextKeyboardButton.sizeToFit()
+        nextKeyboardButton.translatesAutoresizingMaskIntoConstraints = false
+        nextKeyboardButton.addTarget(
+            self,
+            action: #selector(advanceToNextInputMode),
+            forControlEvents: .TouchUpInside)
+        view.addSubview(nextKeyboardButton)
+        
+        addShortWordButton()
+        //initializeKeyboard()
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        initializeKeyboard()
+        
+        // Set up constraints for next keyboard button in view did appear
+        if nextKeyboardButtonLeftSideConstraint == nil {
+            nextKeyboardButtonLeftSideConstraint = NSLayoutConstraint(
+                item: nextKeyboardButton,
+                attribute: .Left,
+                relatedBy: .Equal,
+                toItem: view,
+                attribute: .Left,
+                multiplier: 1.0,
+                constant: 0.0)
+            let nextKeyboardButtonBottomConstraint = NSLayoutConstraint(
+                item: nextKeyboardButton,
+                attribute: .Bottom,
+                relatedBy: .Equal,
+                toItem: view,
+                attribute: .Bottom,
+                multiplier: 1.0,
+                constant: 0.0)
+            view.addConstraints([
+                nextKeyboardButtonLeftSideConstraint,
+                nextKeyboardButtonBottomConstraint])
+        }
     }
         
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-        shiftMode = .On
-        initializeKeyboard()
+        //shiftMode = .On
+       setUpHeightConstraint()
     }
     
-    override func updateViewConstraints() {
-        super.updateViewConstraints()
-        view.removeConstraint(heightConstraint)
-        heightConstraint.constant = keyboardHeight
-        view.addConstraint(heightConstraint)
+    func setUpHeightConstraint()
+    {
+        let customHeight = UIScreen.mainScreen().bounds.height / 2
+        
+        if heightConstraint == nil {
+            heightConstraint = NSLayoutConstraint(item: view,
+                                                  attribute: .Height,
+                                                  relatedBy: .Equal,
+                                                  toItem: nil,
+                                                  attribute: .NotAnAttribute,
+                                                  multiplier: 1,
+                                                  constant: customHeight)
+            heightConstraint.priority = UILayoutPriority(UILayoutPriorityRequired)
+            
+            view.addConstraint(heightConstraint)
+        }
+        else {
+            heightConstraint.constant = customHeight
+        }
     }
+    
+//    override func updateViewConstraints() {
+//        super.updateViewConstraints()
+//        view.removeConstraint(heightConstraint)
+//        heightConstraint.constant = keyboardHeight
+//        view.addConstraint(heightConstraint)
+//    }
     
     // MARK: Event handlers
     // Shift Buttton Action(Uppercase, Lowercase disabled the Caps Mode)
@@ -505,8 +630,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func addNextKeyboardButton() {
-        nextKeyboardButton = KeyButton(frame: CGRectMake(keyWidth * 7.5 + spacing * 8.5, keyHeight * 5.0 + spacing * 6.0, keyWidth, keyHeight))
-        nextKeyboardButton.setTitle("\u{0001F310}", forState: .Normal)
+        //nextKeyboardButton = KeyButton(frame: CGRectMake(keyWidth * 7.5 + spacing * 8.5, keyHeight * 5.0 + spacing * 6.0, keyWidth, keyHeight))
+        //nextKeyboardButton.setTitle("\u{0001F310}", forState: .Normal)
         nextKeyboardButton.addTarget(self, action: #selector(UIInputViewController.advanceToNextInputMode), forControlEvents: .TouchUpInside)
         self.view.addSubview(nextKeyboardButton)
     }
@@ -566,6 +691,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             shortWordButton.setBackgroundImage(gradient.UIImageFromCALayer(), forState: .Normal)
             shortWordButton.addTarget(self, action: #selector(KeyboardViewController.shortWordButtonPressed(_:)), forControlEvents: .TouchUpInside)
             self.view.addSubview(shortWordButton)
+            arrayOfShortWordButton.append(shortWordButton);
         }
     }
     private func addNumpadButton(){
