@@ -563,7 +563,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             arrayOfShortWordButton[0].removeConstraint(cons);
         }
         
-        let topCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: 0.0);
+        let topCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: keyHeight + spacing);
         
         let leftCons = NSLayoutConstraint(item: arrayOfShortWordButton[0], attribute: .Leading, relatedBy: .Equal, toItem: view, attribute: .Leading, multiplier: 1.0, constant: spacing );
         
@@ -586,7 +586,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                 shortWordButtonObj.removeConstraint(cons);
             }
             
-            let topCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: 0.0);
+            let topCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant:  keyHeight + spacing);
             
             let leftCons = NSLayoutConstraint(item: shortWordButtonObj, attribute: .Leading, relatedBy: .Equal, toItem: previosBtn, attribute: .Trailing, multiplier: 1.0, constant: spacing );
             
@@ -608,7 +608,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         // Add Constraints for Return Button
         removeAllConstrains(predictiveTextScrollView);
         
-        let topCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Top, relatedBy: .Equal, toItem: spaceButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        let topCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Top, relatedBy: .Equal, toItem: view, attribute: .Top, multiplier: 1.0, constant: spacing);
         
         let rightCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Trailing, relatedBy: .Equal, toItem: view, attribute: .Trailing, multiplier: 1.0, constant: -spacing );
         
