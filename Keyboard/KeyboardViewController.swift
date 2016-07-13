@@ -499,8 +499,6 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         rightConsReturnButton.active = true
         heightConsReturnButton.active = true
         widthConsReturnButton.active = true
-        
-        //returnButton = KeyButton(frame: CGRectMake(keyWidth * 8.5 + spacing * 9.5, keyHeight * 5.0 + spacing * 6.0, keyWidth * 1.5 + spacing / 2, keyHeight))
     }
     
     func removeAllConstrains(inputView:UIView)
@@ -604,6 +602,27 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         }
     }
     
+    func updateConstraintForPredictiveText()
+    {
+        
+        // Add Constraints for Return Button
+        removeAllConstrains(predictiveTextScrollView);
+        
+        let topCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Top, relatedBy: .Equal, toItem: spaceButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let rightCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Trailing, relatedBy: .Equal, toItem: view, attribute: .Trailing, multiplier: 1.0, constant: -spacing );
+        
+        let heightCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let leftCons = NSLayoutConstraint(item: predictiveTextScrollView, attribute: .Leading, relatedBy: .Equal, toItem: view, attribute: .Leading, multiplier: 1.0, constant: spacing )
+        
+        predictiveTextScrollView.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topCons.active = true
+        rightCons.active = true
+        heightCons.active = true
+        leftCons.active = true
+    }
     override func updateViewConstraints()
     {
         super.updateViewConstraints()
@@ -617,27 +636,16 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         updateConstraintForNumberButton()
         updateConstraintForCharacter()
         updateConstraintForSpeceRow()
-        
+        updateConstraintForPredictiveText()
         setUpHeightConstraint()
     }
     
+    var lexicon:UILexicon!;
+    let currentString:NSString = "";
+    
     override func viewDidLoad() {
-        super.viewDidLoad()
-//        view.backgroundColor = UIColor(red: 210.0/255, green: 213.0/255, blue: 219.0/255, alpha: 1)
-//        heightConstraint = NSLayoutConstraint(item: self.view, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0.0, constant: self.keyboardHeight)
-////        view.addConstraint(heightConstraint)
         
-//        nextKeyboardButton = UIButton(type: .System)
-//        nextKeyboardButton.setTitle(
-//            NSLocalizedString("Next Keyboard", comment: "Title for 'Next Keyboard' button"),
-//            forState: .Normal)
-//        nextKeyboardButton.sizeToFit()
-//        nextKeyboardButton.translatesAutoresizingMaskIntoConstraints = false
-//        nextKeyboardButton.addTarget(
-//            self,
-//            action: #selector(advanceToNextInputMode),
-//            forControlEvents: .TouchUpInside)
-//        view.addSubview(nextKeyboardButton)
+        super.viewDidLoad()
         
         addNextKeyboardButton();
         addShortWordButton()
@@ -653,7 +661,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         addOopButton()
         addSpaceButton()
         addReturnButton()
-        //initializeKeyboard()
+        addPredictiveTextScrollView()
+        
+        self.requestSupplementaryLexiconWithCompletion { (lexObj) in
+            self.lexicon = lexObj;
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -742,11 +754,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         var customHeight = UIScreen.mainScreen().bounds.height / 2 ;
         if( iOrientation == .Portrait || iOrientation == .PortraitUpsideDown  )
         {
-            customHeight = UIScreen.mainScreen().bounds.height / 2 - 130;
+            //customHeight = UIScreen.mainScreen().bounds.height / 2 - 130;
         }
         else if( iOrientation == .LandscapeLeft || iOrientation == .LandscapeRight  )
         {
-            customHeight = UIScreen.mainScreen().bounds.height / 2 - 40;
+            //customHeight = UIScreen.mainScreen().bounds.height / 2 - 40;
         }
         else{
             return;
@@ -975,7 +987,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         case .Caps:
             proxy.insertText(button.primaryCharacter.uppercaseString)
         }
-        //updateSuggestions()
+        updateSuggestions()
     }
     
     func handleSwipeUpForButton(button: CharacterButton) {
@@ -1231,19 +1243,45 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func updateSuggestions() {
-        for suggestionButton in suggestionButtons {
-            suggestionButton.removeFromSuperview()
-        }
         
         if let lastWord = lastWordTyped {
-            var x = spacing
-            for suggestion in suggestionProvider.suggestionsForPrefix(lastWord) {
-                let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, predictiveTextButtonWidth, predictiveTextBoxHeight), title: suggestion, delegate: self)
-                predictiveTextScrollView?.addSubview(suggestionButton)
-                suggestionButtons.append(suggestionButton)
-                x += predictiveTextButtonWidth + spacing
-            }
-            predictiveTextScrollView!.contentSize = CGSizeMake(x, predictiveTextBoxHeight)
+        
+            let filtedArray = self.lexicon.entries.filter({ (lexiconEntry) -> Bool in
+                
+                if ((lexiconEntry.documentText.rangeOfString(lastWord, options: NSStringCompareOptions.CaseInsensitiveSearch, range: nil, locale: nil)) != nil)
+                {
+                    return true
+                }
+                else
+                {
+                    return false
+                }
+            })
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                for view in self.predictiveTextScrollView.subviews {
+                    view.removeFromSuperview()
+                    
+                }
+                self.suggestionButtons = [];
+                
+                var x = self.spacing
+                for i in 0..<filtedArray.count
+                {
+                    let entry:UILexiconEntry = filtedArray[i]
+                    let text = entry.userInput;
+                    
+                    let suggestionButton = SuggestionButton(frame: CGRectMake(x, 0.0, self.predictiveTextButtonWidth, self.predictiveTextBoxHeight), title: text, delegate: self)
+                    
+                    self.predictiveTextScrollView?.addSubview(suggestionButton)
+                    self.suggestionButtons.append(suggestionButton)
+                    
+                    x += self.predictiveTextButtonWidth + self.spacing
+                }
+                
+                self.predictiveTextScrollView!.contentSize = CGSizeMake(x, self.predictiveTextBoxHeight)
+            })
         }
     }
 }
