@@ -34,7 +34,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     private var keyboardHeight: CGFloat {
         if(UIScreen.mainScreen().bounds.width < UIScreen.mainScreen().bounds.height ){
-            return 260
+            return 400
         }
         else{
             return 370
@@ -348,7 +348,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
                             
                             let topConsShiftBtn = NSLayoutConstraint(item: deleteButton, attribute: .Top, relatedBy: .Equal, toItem: ACharBtn, attribute: .Bottom, multiplier: 1.0, constant: spacing);
                             
-                            let leftConsShiftBtn = NSLayoutConstraint(item: deleteButton, attribute: .Leading, relatedBy: .Equal, toItem: characterButton, attribute: .Trailing, multiplier: 1.0, constant: 0 );
+                            let leftConsShiftBtn = NSLayoutConstraint(item: deleteButton, attribute: .Leading, relatedBy: .Equal, toItem: characterButton, attribute: .Trailing, multiplier: 1.0, constant: spacing );
                             
                             let heightConsShiftBtn = NSLayoutConstraint(item: deleteButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
                             
@@ -369,6 +369,138 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
             }
             y += keyHeight + spacing
         }
+    }
+    
+    func updateConstraintForSpeceRow()
+    {
+        // Add Constraints for tabButton
+        removeAllConstrains(tabButton);
+        
+        let topConsTabButton = NSLayoutConstraint(item: tabButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let leftConsTabButton = NSLayoutConstraint(item: tabButton, attribute: .Leading, relatedBy: .Equal, toItem: view, attribute: .Leading, multiplier: 1.0, constant: spacing );
+        
+        let heightConsTabButton = NSLayoutConstraint(item: tabButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsTabButton = NSLayoutConstraint(item: tabButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth)
+        
+        tabButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsTabButton.active = true
+        leftConsTabButton.active = true
+        heightConsTabButton.active = true
+        widthConsTabButton.active = true
+        
+        // Add Constraints for eepButton
+        removeAllConstrains(eepButton);
+        
+        let topConsEEPButton = NSLayoutConstraint(item: eepButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let leftConsEEPButton = NSLayoutConstraint(item: eepButton, attribute: .Leading, relatedBy: .Equal, toItem: tabButton, attribute: .Trailing, multiplier: 1.0, constant: spacing );
+        
+        let heightConsEEPButton = NSLayoutConstraint(item: eepButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsEEPButton = NSLayoutConstraint(item: eepButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth)
+        
+        eepButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsEEPButton.active = true
+        leftConsEEPButton.active = true
+        heightConsEEPButton.active = true
+        widthConsEEPButton.active = true
+        
+        // Add Constraints for iipButton
+        removeAllConstrains(iipButton);
+        
+        let topConsIIPButton = NSLayoutConstraint(item: iipButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let leftConsIIPButton = NSLayoutConstraint(item: iipButton, attribute: .Leading, relatedBy: .Equal, toItem: eepButton, attribute: .Trailing, multiplier: 1.0, constant: spacing );
+        
+        let heightConsIIPButton = NSLayoutConstraint(item: iipButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsIIPButton = NSLayoutConstraint(item: iipButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth)
+        
+        iipButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsIIPButton.active = true
+        leftConsIIPButton.active = true
+        heightConsIIPButton.active = true
+        widthConsIIPButton.active = true
+        
+        // Add Constraints for iipButton
+        removeAllConstrains(uupButton);
+        
+        let topConsUUPButton = NSLayoutConstraint(item: uupButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let leftConsUUPButton = NSLayoutConstraint(item: uupButton, attribute: .Leading, relatedBy: .Equal, toItem: iipButton, attribute: .Trailing, multiplier: 1.0, constant: spacing );
+        
+        let heightConsUUPButton = NSLayoutConstraint(item: uupButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsUUPButton = NSLayoutConstraint(item: uupButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth)
+        
+        uupButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsUUPButton.active = true
+        leftConsUUPButton.active = true
+        heightConsUUPButton.active = true
+        widthConsUUPButton.active = true
+
+        // Add Constraints for oopButton
+        removeAllConstrains(oopButton);
+        
+        let topConsOOPButton = NSLayoutConstraint(item: oopButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let leftConsOOPButton = NSLayoutConstraint(item: oopButton, attribute: .Leading, relatedBy: .Equal, toItem: uupButton, attribute: .Trailing, multiplier: 1.0, constant: spacing );
+        
+        let heightConsOOPButton = NSLayoutConstraint(item: oopButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsOOPButton = NSLayoutConstraint(item: oopButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth)
+        
+        oopButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsOOPButton.active = true
+        leftConsOOPButton.active = true
+        heightConsOOPButton.active = true
+        widthConsOOPButton.active = true
+        
+        
+        // Add Constraints for Space Button
+        removeAllConstrains(spaceButton);
+        
+        let topConsSpeceButton = NSLayoutConstraint(item: spaceButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let leftConsSpeceButton = NSLayoutConstraint(item: spaceButton, attribute: .Leading, relatedBy: .Equal, toItem: oopButton, attribute: .Trailing, multiplier: 1.0, constant: spacing );
+        
+        let heightConsSpeceButton = NSLayoutConstraint(item: spaceButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsSpeceButton = NSLayoutConstraint(item: spaceButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth * 2.5)
+        
+        spaceButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsSpeceButton.active = true
+        leftConsSpeceButton.active = true
+        heightConsSpeceButton.active = true
+        widthConsSpeceButton.active = true
+        
+        // Add Constraints for Return Button
+        removeAllConstrains(returnButton);
+        
+        let topConsReturnButton = NSLayoutConstraint(item: returnButton, attribute: .Top, relatedBy: .Equal, toItem: shiftButton, attribute: .Bottom, multiplier: 1.0, constant: spacing);
+        
+        let rightConsReturnButton = NSLayoutConstraint(item: returnButton, attribute: .Trailing, relatedBy: .Equal, toItem: view, attribute: .Trailing, multiplier: 1.0, constant: -spacing );
+        
+        let heightConsReturnButton = NSLayoutConstraint(item: returnButton, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyHeight)
+        
+        let widthConsReturnButton = NSLayoutConstraint(item: returnButton, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1.0, constant: keyWidth * 1.5 )
+        
+        returnButton.translatesAutoresizingMaskIntoConstraints = false;
+        
+        topConsReturnButton.active = true
+        rightConsReturnButton.active = true
+        heightConsReturnButton.active = true
+        widthConsReturnButton.active = true
+        
+        //returnButton = KeyButton(frame: CGRectMake(keyWidth * 8.5 + spacing * 9.5, keyHeight * 5.0 + spacing * 6.0, keyWidth * 1.5 + spacing / 2, keyHeight))
     }
     
     func removeAllConstrains(inputView:UIView)
@@ -484,6 +616,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         updateConstraintForShortWorld();
         updateConstraintForNumberButton()
         updateConstraintForCharacter()
+        updateConstraintForSpeceRow()
         
         setUpHeightConstraint()
     }
@@ -512,7 +645,13 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         addDotButton();
         addShiftButton();
         addDeleteButton()
-        
+        addAapButton()
+        addEepButton()
+        addIipButton()
+        addUupButton()
+        addOopButton()
+        addSpaceButton()
+        addReturnButton()
         //initializeKeyboard()
     }
     
@@ -552,7 +691,22 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     
     func setUpHeightConstraint()
     {
-        let customHeight = UIScreen.mainScreen().bounds.height / 2
+        let iOrientation:UIInterfaceOrientation = self.interfaceOrientation;
+        
+        var customHeight = UIScreen.mainScreen().bounds.height / 2 ;
+        if( iOrientation == .Portrait || iOrientation == .PortraitUpsideDown  )
+        {
+            customHeight = UIScreen.mainScreen().bounds.height / 2 - 70;
+        }
+        else if( iOrientation == .LandscapeLeft || iOrientation == .LandscapeRight  )
+        {
+            customHeight = UIScreen.mainScreen().bounds.height / 2;
+        }
+        else{
+            return;
+        }
+        
+        
         
         if heightConstraint == nil {
             heightConstraint = NSLayoutConstraint(item: view,
