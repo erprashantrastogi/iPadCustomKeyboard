@@ -627,18 +627,19 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
 //        heightConstraint = NSLayoutConstraint(item: self.view, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 0.0, constant: self.keyboardHeight)
 ////        view.addConstraint(heightConstraint)
         
-        nextKeyboardButton = UIButton(type: .System)
-        nextKeyboardButton.setTitle(
-            NSLocalizedString("Next Keyboard", comment: "Title for 'Next Keyboard' button"),
-            forState: .Normal)
-        nextKeyboardButton.sizeToFit()
-        nextKeyboardButton.translatesAutoresizingMaskIntoConstraints = false
-        nextKeyboardButton.addTarget(
-            self,
-            action: #selector(advanceToNextInputMode),
-            forControlEvents: .TouchUpInside)
-        view.addSubview(nextKeyboardButton)
+//        nextKeyboardButton = UIButton(type: .System)
+//        nextKeyboardButton.setTitle(
+//            NSLocalizedString("Next Keyboard", comment: "Title for 'Next Keyboard' button"),
+//            forState: .Normal)
+//        nextKeyboardButton.sizeToFit()
+//        nextKeyboardButton.translatesAutoresizingMaskIntoConstraints = false
+//        nextKeyboardButton.addTarget(
+//            self,
+//            action: #selector(advanceToNextInputMode),
+//            forControlEvents: .TouchUpInside)
+//        view.addSubview(nextKeyboardButton)
         
+        addNextKeyboardButton();
         addShortWordButton()
         addNumpadButton()
         addCharacterButtons()
@@ -658,28 +659,73 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
+        removeAllConstrains(nextKeyboardButton);
+        
+        nextKeyboardButton.translatesAutoresizingMaskIntoConstraints = false
+        nextKeyboardButtonLeftSideConstraint = NSLayoutConstraint(
+            item: nextKeyboardButton,
+            attribute: .Leading,
+            relatedBy: .Equal,
+            toItem: spaceButton,
+            attribute: .Trailing,
+            multiplier: 1.0,
+            constant: spacing)
+        
+        let nextKeyboardButtonRightSideConstraint = NSLayoutConstraint(
+            item: nextKeyboardButton,
+            attribute: .Trailing,
+            relatedBy: .Equal,
+            toItem: returnButton,
+            attribute: .Leading,
+            multiplier: 1.0,
+            constant: -spacing)
+        
+        let nextKeyboardButtonBottomConstraint = NSLayoutConstraint(
+            item: nextKeyboardButton,
+            attribute: .Top,
+            relatedBy: .Equal,
+            toItem: spaceButton,
+            attribute: .Top,
+            multiplier: 1.0,
+            constant: 0)
+        
+        let nextKeyboardButtonHeightConstraint = NSLayoutConstraint(
+            item: nextKeyboardButton,
+            attribute: .Height,
+            relatedBy: .Equal,
+            toItem: nil,
+            attribute: .NotAnAttribute,
+            multiplier: 1.0,
+            constant: keyHeight)
+        
+        view.addConstraints([
+            nextKeyboardButtonLeftSideConstraint,
+            nextKeyboardButtonBottomConstraint,nextKeyboardButtonRightSideConstraint,nextKeyboardButtonHeightConstraint])
+        
         // Set up constraints for next keyboard button in view did appear
-        if nextKeyboardButtonLeftSideConstraint == nil {
-            nextKeyboardButtonLeftSideConstraint = NSLayoutConstraint(
-                item: nextKeyboardButton,
-                attribute: .Left,
-                relatedBy: .Equal,
-                toItem: view,
-                attribute: .Left,
-                multiplier: 1.0,
-                constant: 0.0)
-            let nextKeyboardButtonBottomConstraint = NSLayoutConstraint(
-                item: nextKeyboardButton,
-                attribute: .Bottom,
-                relatedBy: .Equal,
-                toItem: view,
-                attribute: .Bottom,
-                multiplier: 1.0,
-                constant: 0.0)
-            view.addConstraints([
-                nextKeyboardButtonLeftSideConstraint,
-                nextKeyboardButtonBottomConstraint])
-        }
+//        if nextKeyboardButtonLeftSideConstraint == nil {
+//            nextKeyboardButtonLeftSideConstraint = NSLayoutConstraint(
+//                item: nextKeyboardButton,
+//                attribute: .Leading,
+//                relatedBy: .Equal,
+//                toItem: spaceButton,
+//                attribute: .Trailing,
+//                multiplier: 1.0,
+//                constant: spacing)
+//            
+//            let nextKeyboardButtonBottomConstraint = NSLayoutConstraint(
+//                item: nextKeyboardButton,
+//                attribute: .Top,
+//                relatedBy: .Equal,
+//                toItem: spaceButton,
+//                attribute: .Bottom,
+//                multiplier: 1.0,
+//                constant: spacing)
+//            
+//            view.addConstraints([
+//                nextKeyboardButtonLeftSideConstraint,
+//                nextKeyboardButtonBottomConstraint])
+//        }
     }
         
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
@@ -696,11 +742,11 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         var customHeight = UIScreen.mainScreen().bounds.height / 2 ;
         if( iOrientation == .Portrait || iOrientation == .PortraitUpsideDown  )
         {
-            customHeight = UIScreen.mainScreen().bounds.height / 2 - 70;
+            customHeight = UIScreen.mainScreen().bounds.height / 2 - 130;
         }
         else if( iOrientation == .LandscapeLeft || iOrientation == .LandscapeRight  )
         {
-            customHeight = UIScreen.mainScreen().bounds.height / 2;
+            customHeight = UIScreen.mainScreen().bounds.height / 2 - 40;
         }
         else{
             return;
@@ -770,7 +816,7 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         default:
             deleteButtonTimer?.invalidate()
             deleteButtonTimer = nil
-            updateSuggestions()
+            //updateSuggestions()
         }
     }
     
@@ -1018,9 +1064,9 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
         deleteButton.addTarget(self, action: #selector(KeyboardViewController.deleteButtonPressed(_:)), forControlEvents: .TouchUpInside)
         self.view.addSubview(deleteButton)
         
-//        let deleteButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(KeyboardViewController.handleLongPressForDeleteButtonWithGestureRecognizer(_:)))
-//        deleteButton.addGestureRecognizer(deleteButtonLongPressGestureRecognizer)
-//        
+        let deleteButtonLongPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(KeyboardViewController.handleLongPressForDeleteButtonWithGestureRecognizer(_:)))
+        deleteButton.addGestureRecognizer(deleteButtonLongPressGestureRecognizer)
+        
 //        let deleteButtonSwipeLeftGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(KeyboardViewController.handleSwipeLeftForDeleteButtonWithGestureRecognizer(_:)))
 //        deleteButtonSwipeLeftGestureRecognizer.direction = .Left
 //        deleteButton.addGestureRecognizer(deleteButtonSwipeLeftGestureRecognizer)
@@ -1070,8 +1116,8 @@ class KeyboardViewController: UIInputViewController, CharacterButtonDelegate, Su
     }
     
     private func addNextKeyboardButton() {
-        //nextKeyboardButton = KeyButton(frame: CGRectMake(keyWidth * 7.5 + spacing * 8.5, keyHeight * 5.0 + spacing * 6.0, keyWidth, keyHeight))
-        //nextKeyboardButton.setTitle("\u{0001F310}", forState: .Normal)
+        nextKeyboardButton = KeyButton(frame: CGRectMake(keyWidth * 7.5 + spacing * 8.5, keyHeight * 5.0 + spacing * 6.0, keyWidth, keyHeight))
+        nextKeyboardButton.setTitle("\u{0001F310}", forState: .Normal)
         nextKeyboardButton.addTarget(self, action: #selector(UIInputViewController.advanceToNextInputMode), forControlEvents: .TouchUpInside)
         self.view.addSubview(nextKeyboardButton)
     }
